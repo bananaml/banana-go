@@ -63,8 +63,7 @@ func Start(apiKey string, modelKey string, inputs []byte) (callID string, err er
 	return re.CallID, nil
 }
 
-// Check will check the status of an existing async inference task. If the task has finished, the task's return values will be marshalled into payloadOut.
-// The "done" boolean return value indicates if the requested async inference task has finished (true) or is still running (false).
+// Check will check the status of an existing async inference task.
 func Check(apiKey string, callID string) (outCheckV2, error) {
 
 	p := inCheckV2{

@@ -9,7 +9,7 @@ var endpoint string
 
 func init() {
 	// Set endpoint to whatever is in env
-	switch env := os.Getenv("BOOSTE_URL"); env {
+	switch env := os.Getenv("BANANA_URL"); env {
 	case "":
 		// Prod case, zero value
 		endpoint = "http://api.banana.dev/"

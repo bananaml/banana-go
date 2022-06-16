@@ -2,6 +2,7 @@ package banana
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -12,13 +13,22 @@ type errJSON struct {
 	Message string
 }
 
-func post(url string, p interface{}, re interface{}) error {
+func post(ctx context.Context, url string, p interface{}, re interface{}) error {
 
 	// Marshal the payload
-	jsonBytes, _ := json.Marshal(p)
+	jsonBytes, err := json.Marshal(p)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonBytes))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
 
 	// Post it
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonBytes))
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -37,7 +47,11 @@ func post(url string, p interface{}, re interface{}) error {
 			if err != nil {
 				return err
 			}
-			return fmt.Errorf("banana returned status code %v with message:%s", resp.StatusCode, errStruct.Message)
+			return fmt.Errorf(
+				"banana returned status code %v with message:%s",
+				resp.StatusCode,
+				errStruct.Message,
+			)
 		}
 
 		return fmt.Errorf("banana returned status code %v", resp.StatusCode)

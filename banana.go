@@ -12,12 +12,12 @@ import (
 // Run will call the inference pipeline on custom models with the use of a model key.
 // It is a syncronous wrapper around the async Start and Check functions.
 func Run(apiKey string, modelKey string, inputs []byte) (Result, error) {
-	return RunContext(context.Background(), apiKey, modelKey, inputs)
+	return RunWithContext(context.Background(), apiKey, modelKey, inputs)
 }
 
-// RunContext is the same as Run, but with a non-default context.
+// RunWithContext is the same as Run, but with a non-default context.
 // This allows for in-progress cancellation.
-func RunContext(
+func RunWithContext(
 	ctx context.Context,
 	apiKey string,
 	modelKey string,
@@ -45,7 +45,7 @@ func RunContext(
 	// Else if long running, poll check until done
 	out := Result{}
 	for {
-		out, err = CheckContext(ctx, apiKey, res.CallID)
+		out, err = CheckWithContext(ctx, apiKey, res.CallID)
 		if err != nil {
 			return Result{}, err
 		}
@@ -60,12 +60,12 @@ func RunContext(
 
 // Start will start an async inference task and return a task ID.
 func Start(apiKey string, modelKey string, inputs []byte) (callID string, err error) {
-	return StartContext(context.Background(), apiKey, modelKey, inputs)
+	return StartWithContext(context.Background(), apiKey, modelKey, inputs)
 }
 
-// StartContext is the same as Start, but with a non-default context.
+// StartWithContext is the same as Start, but with a non-default context.
 // This allows for in-progress cancellation.
-func StartContext(
+func StartWithContext(
 	ctx context.Context,
 	apiKey string,
 	modelKey string,
@@ -115,12 +115,12 @@ func subStart(
 
 // Check will check the status of an existing async inference task.
 func Check(apiKey string, callID string) (Result, error) {
-	return CheckContext(context.Background(), apiKey, callID)
+	return CheckWithContext(context.Background(), apiKey, callID)
 }
 
-// CheckContext is the same as Check, but with a non-default context.
+// CheckWithContext is the same as Check, but with a non-default context.
 // This allows for in-progress cancellation.
-func CheckContext(ctx context.Context, apiKey string, callID string) (Result, error) {
+func CheckWithContext(ctx context.Context, apiKey string, callID string) (Result, error) {
 	p := inCheckV3{
 		ID:       uuid.New().String(),
 		Created:  time.Now().Unix(),

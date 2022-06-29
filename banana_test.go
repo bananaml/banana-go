@@ -56,7 +56,7 @@ func TestContext(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
 	defer cancel()
 
-	_, err = RunContext(ctx, testingAPIKey, testingModelKey, buf)
+	_, err = RunWithContext(ctx, testingAPIKey, testingModelKey, buf)
 
 	// Ensure that the context was cancelled.
 	if !errors.Is(err, context.DeadlineExceeded) {
